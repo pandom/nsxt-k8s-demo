@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mgmtpod
+spec:
+  containers:
+  - name: ubuntu
+    image: tutum/ubuntu:trusty
+    ports:
+    - name: ssh
+      containerPort: 22
+    env:
+    - name: ROOT_PASS
+      value: VMware1!

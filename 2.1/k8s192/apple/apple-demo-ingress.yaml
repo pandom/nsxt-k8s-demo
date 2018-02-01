@@ -1,0 +1,12 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: apple-demo-ingress
+spec:
+  rules:
+  - host: apple.demo.corp.local
+    http:
+      paths:
+      - backend:
+          serviceName: apple-demo
+          servicePort: 80

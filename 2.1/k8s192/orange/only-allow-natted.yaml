@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: orange-demo-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: orange-demo
+  ingress:
+    - ports:
+        - protocol: TCP
+          port: 80
+      from:
+        - ipBlock:
+            cidr: 172.19.100.0/24

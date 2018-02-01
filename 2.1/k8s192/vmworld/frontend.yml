@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: nsx-redis
+    tier: frontend
+spec:
+  ports:
+  - port: 80
+  selector:
+    app: nsx-redis
+    tier: frontend
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nsx-redis
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: yasensim/fe-for-redis
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+        env:
+        - name: GET_HOSTS_FROM
+          value: dns
+          # If your cluster config does not include a dns service, then to
+          # instead access environment variables to find service host
+          # info, comment out the 'value: dns' line above, and uncomment the
+          # line below:
+        ports:
+        - containerPort: 80
