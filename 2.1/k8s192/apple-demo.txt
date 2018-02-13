@@ -1,5 +1,0 @@
-kubectl create namespace apple
-kubectl config set-context kubernetes-admin@kubernetes --namespace apple
-kubectl config use-context kubernetes-admin@kubernetes
-kubectl exec -it apple-demo-rc-krj5p -- ip address
-kubectl exec -it apple-demo-rc-krj5p -- ping -c 3 10.4.0.131
