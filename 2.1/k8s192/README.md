@@ -1,4 +1,8 @@
 # Overview 
+## Topology
+
+![nsxt-demo-topo.jpg](resources/D9AA159684C042D645BE72D934EA8DE9.jpg)
+
 ## Create Namespace 'apple'
   - `kubectl create namespace apple`
 
