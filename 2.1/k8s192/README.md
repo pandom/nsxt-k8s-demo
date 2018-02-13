@@ -310,6 +310,8 @@ OFPST_GROUP_DESC reply (OF1.3) (xid=0x2):
  group_id=1,type=select,bucket=weight:100,actions=ct(commit,table=2,zone=20,nat(dst=10.0.1.10:6443))
 ```
 
+![k8s-l4-lb.jpg](resources/3069706971B08F1C2653DDFF18E472FC.jpg)
+
 ## Create Service with 'Type Load balancer'
   - Create service with 'type loadbalancer'
   - Configure load balance config on openvswitch and L4 loadbalancer in nsx as well
@@ -396,6 +398,8 @@ Annotations:
 Events:  <none>
 
 ```
+
+![k8s-l7-lb.jpg](resources/EB07594C4ED5505BF88C79085ABAF515.jpg)
 
 ![](resources/630E2F930E7B167642816A633E57C437.jpg)
 
@@ -530,6 +534,49 @@ spec:
     securityContext:
       privileged: true
 ```
+
+```sh
+localadmin@k8s-master:~/demos/orange$ kubectl -n orange get pod -o wide
+NAME                   READY     STATUS    RESTARTS   AGE       IP           NODE
+orange-demo-rc-dgdtl   1/1       Running   1          5d        10.4.0.102   k8s-node2
+orange-demo-rc-dkq6v   1/1       Running   1          5d        10.4.0.101   k8s-node1
+orange-mgmtpod         1/1       Running   1          11d       10.4.0.100   k8s-node1
+localadmin@k8s-master:~/demos/orange$
+localadmin@k8s-master:~/demos/orange$ kubectl -n orange exec -it orange-mgmtpod -- /bin/bash
+root@orange-mgmtpod:/#
+root@orange-mgmtpod:/# ip add
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+10: eth0@if11: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether 02:50:56:00:40:03 brd ff:ff:ff:ff:ff:ff
+    inet 10.4.0.100/27 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::50:56ff:fe00:4003/64 scope link
+       valid_lft forever preferred_lft forever
+
+root@orange-mgmtpod:/#
+root@orange-mgmtpod:/# ping -c 3 10.4.0.101
+PING 10.4.0.101 (10.4.0.101) 56(84) bytes of data.
+64 bytes from 10.4.0.101: icmp_seq=1 ttl=64 time=2.05 ms
+64 bytes from 10.4.0.101: icmp_seq=2 ttl=64 time=1.39 ms
+64 bytes from 10.4.0.101: icmp_seq=3 ttl=64 time=0.628 ms
+
+--- 10.4.0.101 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2005ms
+rtt min/avg/max/mdev = 0.628/1.359/2.051/0.582 ms
+root@orange-mgmtpod:/#
+root@orange-mgmtpod:/# ip add delete 10.4.0.100/27 dev eth0
+root@orange-mgmtpod:/# ip add add 10.4.0.103/27 dev eth0
+root@orange-mgmtpod:/# ping 10.4.0.101
+PING 10.4.0.101 (10.4.0.101) 56(84) bytes of data.
+
+```
+
+![k8s-spoofguard.jpg](resources/9488F2DA785F26AB7C5ADB3C1C963BBF.jpg)
 
 # Link
  - https://confluence.eng.vmware.com/display/UJO/DK+GA+Deployment+with+Kubeadm
