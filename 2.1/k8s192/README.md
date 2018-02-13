@@ -75,6 +75,7 @@
   - Try to access to 'apple.demo.corp.local'
 
 ##  Spoof guard
+  - `kubectl -n orange create -f orange/pod-management.yaml`
   - `kubectl -n orange exec -it orange-mgmtpod -- /bin/bash`
   - `ip add`
   - `ip add delete x.x.x.x/x dev eth0`
@@ -253,10 +254,6 @@ Events:           <none>
 
 ```
 
- - create NSgroup based on K8s label
-
-![Cursor\_and\_k8s.jpg](resources/E8ABB640850F5D579E4BA4F330E1A445.jpg)
-
 ## Create service
   - Create service which will assign culster ips for pods
   - This will be configured on openvswitch in K8s nodes.
@@ -336,6 +333,14 @@ spec:
 ```
 
 ```sh
+# create ns and replication controller before service creation
+localadmin@k8s-master:~/demos$ kubectl create ns orange
+namespace "orange" created
+orange-demo-replicationcontroller.yaml  orange-demo-service-lb.yaml             pod-management.yaml
+localadmin@k8s-master:~/demos$ kubectl -n orange create -f orange/orange-demo-replicationcontroller.yaml
+replicationcontroller "orange-demo-rc" created
+
+# Create service
 localadmin@k8s-master:~/demos$ kubectl -n orange describe svc orange-demo                Name:                     orange-demo
 Namespace:                orange
 Labels:                   app=orange-demo
@@ -405,6 +410,69 @@ Events:  <none>
 
 ![lb-source.jpg](resources/144ADBF38B9AB856F3642C1D4A087BDB.jpg)
 
+## Create Firewall based on Label
+  - Try ping between pods in orange namespace
+  - Add metadate to pod
+    - `secgroup: orange-app`
+  - Create NSgroup based on label
+  - Create Firewall based on label
+  - Try ping between pods in orange namespace
+
+```yaml
+# orange/orange-demo-replicationcontroller.yaml
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: orange-demo-rc
+  labels:
+    app: orange-demo
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: orange-demo
+        secgroup: orange-app
+    spec:
+      containers:
+      - name: orange-demo
+        image: yfauser/nsx-demo
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+
+```
+
+```sh
+localadmin@k8s-master:~/demos$ kubectl -n orange get pod -o wide
+NAME                   READY     STATUS    RESTARTS   AGE       IP           NODE
+orange-demo-rc-wqngg   1/1       Running   0          6m        10.4.1.163   k8s-node2
+orange-demo-rc-z85gk   1/1       Running   0          6m        10.4.1.162   k8s-node1
+orange-mgmtpod         1/1       Running   0          6m        10.4.1.164   k8s-node1
+localadmin@k8s-master:~/demos$ kubectl -n orange exec -it orange-demo-rc-wqngg -- ping -c 3 10.4.1.162
+PING 10.4.1.162 (10.4.1.162): 56 data bytes
+64 bytes from 10.4.1.162: icmp_seq=0 ttl=64 time=3.990 ms
+64 bytes from 10.4.1.162: icmp_seq=1 ttl=64 time=0.738 ms
+64 bytes from 10.4.1.162: icmp_seq=2 ttl=64 time=1.428 ms
+--- 10.4.1.162 ping statistics ---
+3 packets transmitted, 3 packets received, 0% packet loss
+round-trip min/avg/max/stddev = 0.738/2.052/3.990/1.399 ms
+```
+
+![Cursor\_and\_k8s.jpg](resources/E8ABB640850F5D579E4BA4F330E1A445.jpg)
+
+![label-based-fw.jpg](resources/7FACBF9B82BE0499ED19CE813F0D4F68.jpg)
+
+```sh
+localadmin@k8s-master:~/demos$ kubectl -n orange exec -it orange-demo-rc-wqngg -- ping -c 3 10.4.1.162
+PING 10.4.1.162 (10.4.1.162): 56 data bytes
+--- 10.4.1.162 ping statistics ---
+3 packets transmitted, 0 packets received, 100% packet loss
+command terminated with exit code 1
+```
+
+
+
 ## Network policy
   - This is GA in k8s 1.7
   - You can create multiple policies for a pod
@@ -454,7 +522,7 @@ Spec:
   Allowing egress traffic:
     <none> (Selected pods are isolated for egress connectivity)
   Policy Types: Ingress, Egress
-l
+
 ```
 
 ![fw-default-deny.jpg](resources/7DE8C4AEC768DED83CBCF37FF937DA50.jpg)
@@ -536,13 +604,15 @@ spec:
 ```
 
 ```sh
-localadmin@k8s-master:~/demos/orange$ kubectl -n orange get pod -o wide
+localadmin@k8s-master:~/demos$ kubectl -n orange create -f orange/pod-management.yaml
+pod "orange-mgmtpod" created
+localadmin@k8s-master:~/demos$ kubectl -n orange get pod -o wide
 NAME                   READY     STATUS    RESTARTS   AGE       IP           NODE
 orange-demo-rc-dgdtl   1/1       Running   1          5d        10.4.0.102   k8s-node2
 orange-demo-rc-dkq6v   1/1       Running   1          5d        10.4.0.101   k8s-node1
 orange-mgmtpod         1/1       Running   1          11d       10.4.0.100   k8s-node1
-localadmin@k8s-master:~/demos/orange$
-localadmin@k8s-master:~/demos/orange$ kubectl -n orange exec -it orange-mgmtpod -- /bin/bash
+localadmin@k8s-master:~/demos$
+localadmin@k8s-master:~/demos$ kubectl -n orange exec -it orange-mgmtpod -- /bin/bash
 root@orange-mgmtpod:/#
 root@orange-mgmtpod:/# ip add
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
