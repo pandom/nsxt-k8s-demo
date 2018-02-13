@@ -310,8 +310,6 @@ OFPST_GROUP_DESC reply (OF1.3) (xid=0x2):
  group_id=1,type=select,bucket=weight:100,actions=ct(commit,table=2,zone=20,nat(dst=10.0.1.10:6443))
 ```
 
-![k8s-l4-lb.jpg](resources/3069706971B08F1C2653DDFF18E472FC.jpg)
-
 ## Create Service with 'Type Load balancer'
   - Create service with 'type loadbalancer'
   - Configure load balance config on openvswitch and L4 loadbalancer in nsx as well
@@ -354,6 +352,8 @@ Session Affinity:         None
 External Traffic Policy:  Cluster
 Events:                   <none>
 ```
+
+![k8s-l4-lb.jpg](resources/3069706971B08F1C2653DDFF18E472FC.jpg)
 
 ![](resources/405AF5CC41BA6ED6C96311E0F0FBDD8B.jpg)
 
