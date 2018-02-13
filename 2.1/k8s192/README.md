@@ -1,4 +1,9 @@
 # Overview 
+## Environment
+  - vAPP
+    NSBU-2018-01-NSX-T-DGO-K8S-v1.1
+  - NSX-T  2.1
+
 ## Topology
 
 ![nsxt-demo-topo.jpg](resources/D9AA159684C042D645BE72D934EA8DE9.jpg)
