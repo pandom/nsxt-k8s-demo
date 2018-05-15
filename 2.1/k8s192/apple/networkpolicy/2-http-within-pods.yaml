@@ -1,0 +1,16 @@
+kind: NetworkPolicy
+apiVersion: extensions/v1beta1
+metadata:
+  name: http-between-pods-same-ns
+spec:
+  podSelector:
+    matchLabels:
+      app: apple-demo
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: apple-demo
+      ports:
+        - protocol: TCP
+          port: 80

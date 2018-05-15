@@ -1,12 +1,12 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: apple-demo-ingress
+  name: web-demo-ingress
 spec:
   rules:
-  - host: apple.demo.pks.ytsuboi.local
+  - host: web.demo.ytsuboi.local
     http:
       paths:
       - backend:
-          serviceName: apple-demo
+          serviceName: web-svc
           servicePort: 80

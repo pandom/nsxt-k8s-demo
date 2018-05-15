@@ -1,14 +1,17 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: apple-demo-policy
+  name: web-demo-policy
 spec:
   podSelector:
     matchLabels:
-      app: apple-demo
+      app: web
   policyTypes:
   - Ingress
   ingress:
-  - ports:
+  - from:
+    - ipBlock:
+        cidr: 100.64.0.7/32
+    ports:
     - protocol: TCP
       port: 80

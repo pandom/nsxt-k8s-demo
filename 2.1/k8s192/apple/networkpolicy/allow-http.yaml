@@ -1,0 +1,24 @@
+kind: NetworkPolicy
+apiVersion: extensions/v1beta1
+metadata:
+  name: allowingress
+spec:
+  podSelector:
+    matchLabels:
+      app: apple-demo
+  ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: apple-demo
+      ports:
+        - protocol: TCP
+          port: 80
+  egress:
+    - to:
+      - podSelector:
+          matchLabels:
+            app: apple-demo
+      ports:
+        - protocol: TCP
+          port: 80

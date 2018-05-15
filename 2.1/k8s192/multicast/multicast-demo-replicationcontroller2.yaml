@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: isolated-rc
+  labels:
+    app: isolated
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: isolated
+    spec:
+      containers:
+      - name: isolated
+        image: harbor.pks.ytsuboi.local/library/testcontainer:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5001

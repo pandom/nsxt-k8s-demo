@@ -1,0 +1,15 @@
+kind: NetworkPolicy
+apiVersion: extensions/v1beta1
+metadata:
+  name: allow-some-egress
+spec:
+  podSelector:
+    matchLabels:
+      app: apple-demo
+  egress:
+    - to:
+      - ipBlock:
+          cidr: 10.29.15.96/27
+      ports:
+        - protocol: TCP
+          port: 22
