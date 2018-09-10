@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx-db-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: nginx
+      role: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx
+          role: client
+    ports:
+    - protocol: TCP
+      port: 8080

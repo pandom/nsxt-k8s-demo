@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nsxt-demo-ingress
+#  annotations:
+#    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: dell.test.ytsuboi.local
+    http:
+      paths:
+      - backend:
+          serviceName: nsx-demo-svc
+          servicePort: 80

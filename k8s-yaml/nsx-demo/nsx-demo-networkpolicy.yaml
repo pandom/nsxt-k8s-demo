@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nsx-demo-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: nsxdemo
+  policyTypes:
+  - Ingress
+  ingress:
+  - ports:
+    - protocol: TCP
+      port: 80

@@ -1,0 +1,12 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: vsphere-pvc01
+  #annotations:
+  #  volume.beta.kubernetes.io/storage-class: vsphere-sc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-web-demo
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nginx
+        role: web
+    spec:
+      containers:
+      - name: nginx-web
+        image: nginx
+        ports:
+        - containerPort: 80

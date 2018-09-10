@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: prometheus
+  namespace: prometheus
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      hostNetwork: true      
+      nodeSelector:
+        node-role: master
+      tolerations:
+        - key: "node-role.kubernetes.io/master"
+          operator: "Exists"
+          effect: "NoSchedule"
+      serviceAccountName: prometheus
+      containers:
+      - name: prometheus
+        image: prom/prometheus
+        ports:
+        - containerPort: 9090
+        volumeMounts:
+          - mountPath: /etc/prometheus
+            readOnly: true
+            name: prometheus-conf
+      volumes:
+        - name: prometheus-conf
+          configMap:
+            name: prometheus-conf
+            items:
+              - key: prometheus.yml
+                path: prometheus.yml

@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-demo-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - host: nginx-web.test.corp.local
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: nginx-demo-svc
+          servicePort: 80

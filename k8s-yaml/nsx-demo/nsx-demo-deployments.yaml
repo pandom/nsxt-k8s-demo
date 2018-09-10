@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nsx-demo
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: nsxdemo
+    spec:
+      containers:
+      - name: nsx-demo
+        image: yfauser/nsx-demo
+        ports:
+        - containerPort: 80
