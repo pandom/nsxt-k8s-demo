@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-with-readinessprobe
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx-demo
+        image: nginx
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            port: 80
+            path: '/health'
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        #livenessProbe:
+        #  httpGet:
+        #    port: 80
+        #  initialDelaySeconds: 3
+        #  periodSeconds: 3 
