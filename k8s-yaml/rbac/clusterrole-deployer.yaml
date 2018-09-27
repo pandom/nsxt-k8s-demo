@@ -7,4 +7,3 @@ rules:
 - verbs: ["create"]
   apiGroups: ["apps"]
   resources: ["deployments"]
-
