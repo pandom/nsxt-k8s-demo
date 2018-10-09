@@ -310,7 +310,7 @@ OFPST_GROUP_DESC reply (OF1.3) (xid=0x2):
 ## Create Service with 'Type Load balancer'
   - Create service with 'type loadbalancer'
   - Configure load balance config on openvswitch and L4 loadbalancer in nsx as well
-  - Source IP is natted with VIP
+  - Source IP is natted with T1 uplink
 
 ```yaml
 # orange/orange-demo-service-lb.yaml
@@ -360,7 +360,7 @@ Events:                   <none>
 
 ![k8s-l4-lb.jpg](resources/3069706971B08F1C2653DDFF18E472FC.jpg)
 
-![](resources/405AF5CC41BA6ED6C96311E0F0FBDD8B.jpg)
+![](resources/630E2F930E7B167642816A633E57C437.jpg)
 
 ## Create ingress
   - create ingress
