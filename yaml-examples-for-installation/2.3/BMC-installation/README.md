@@ -178,6 +178,12 @@ drwxr-xr-x. 3 root root 19 Oct 10 11:05 ..
 -rw-r--r--. 1 root root 54 Sep 14 07:09 99-loopback.conf
 ```
 
+## Join to kubernetes cluster
+
+```
+# kubeadm join k8s-api.ytsuboi.local:6443 --token n1xf4s.kbopvrz015i0v5uq --discovery-token-ca-cert-hash sha256:5d1dcd5ab4af3c9ea9f57f652fd478e525d0c94a5a320c7d59e904097b67722b
+```
+
 ## Deploy ncp and nsx-node-agent
 ### Create namspace for ncp
 ```
