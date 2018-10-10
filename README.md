@@ -11,3 +11,7 @@ There are some yaml fiels used for demo and testing
 ## test-scripts
 
 It is useful when you create multiple tenants at the same time.
+
+## yaml-examples-for-installation
+
+This is an example when you deploy ncp/nsx-node-agent on native kubernetes
