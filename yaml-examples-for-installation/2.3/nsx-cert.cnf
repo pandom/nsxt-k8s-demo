@@ -1,0 +1,18 @@
+[ req ]
+default_bits = 2048
+distinguished_name = req_distinguished_name
+req_extensions = req_ext
+prompt = no
+
+[ req_distinguished_name ]
+countryName = JP
+stateOrProvinceName = Tokyo
+localityName = Minato-ku
+organizationName = VMware
+commonName = nsxm-site2.ytsuboi.local
+
+[ req_ext ]
+subjectAltName=DNS:nsxm-site2.ytsuboi.local,IP:10.16.187.13
+
+[SAN]
+subjectAltName=DNS:nsxm-site2.ytsuboi.local,IP:10.16.187.13
