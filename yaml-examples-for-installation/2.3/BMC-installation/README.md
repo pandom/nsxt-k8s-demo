@@ -50,6 +50,7 @@ EOF
 ## Update packages except for kernel and redhat releases
 Add the following lines in /etc/yum.conf
 ```
+# vi /etc/yum.conf
 exclude=kernel* redhat-release*
 ```
 
@@ -90,23 +91,23 @@ Add the following tag Transport Node
 ## Preparation for kubeadm
 ### Open some ports on Firewall On worker
 ```
-firewall-cmd --zone=public --add-port=10250/tcp --permanent
-firewall-cmd --zone=public --add-port=10255/tcp --permanent
-firewall-cmd --reload
+# firewall-cmd --zone=public --add-port=10250/tcp --permanent
+# firewall-cmd --zone=public --add-port=10255/tcp --permanent
+# firewall-cmd --reload
 ```
 
 ### Install Docker
 
 ```
-yum install -y docker
-systemctl enable docker && systemctl start docker
+# yum install -y docker
+# systemctl enable docker && systemctl start docker
 ```
 
 
 ### Install kubeadm
 
 ```
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+# cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
 baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -121,52 +122,26 @@ Turn off SELINUX
 
 ```
 # setenforce 0
-# cat /etc/selinux/config
-
-# This file controls the state of SELinux on the system.
-# SELINUX= can take one of these three values:
-#     enforcing - SELinux security policy is enforced.
-#     permissive - SELinux prints warnings instead of enforcing.
-#     disabled - No SELinux policy is loaded.
+# vi /etc/selinux/config # to change SELINUX to permissive like below
 SELINUX=permissive
-# SELINUXTYPE= can take one of three two values:
-#     targeted - Targeted processes are protected,
-#     minimum - Modification of targeted policy. Only selected processes are protected.
-#     mls - Multi Level Security protection.
-SELINUXTYPE=targeted
 ```
 
 Enable forwarding in the node. (Not sure if we can remove this config after joining)
 
-```text
-cat <<EOF >  /etc/sysctl.d/k8s.conf
+```
+# cat <<EOF >  /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward = 1
 net.bridge.bridge-nf-call-ip6tables = 1
 net.bridge.bridge-nf-call-iptables = 1
 EOF
-sysctl --system
-
+# sysctl --system
 ```
 
 Turn off Swap
 
 ```
 # swapoff -a
-[root@k8s-master1 ~]#
-[root@k8s-master1 ~]# vi /etc/fstab
-[root@k8s-master1 ~]#
-[root@k8s-master1 ~]#
-[root@k8s-master1 ~]# cat /etc/fstab
-
-#
-# /etc/fstab
-# Created by anaconda on Tue Oct  2 21:28:16 2018
-#
-# Accessible filesystems, by reference, are maintained under '/dev/disk'
-# See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info
-#
-/dev/mapper/rhel-root   /                       xfs     defaults        0 0
-UUID=5ebbbb0d-9ac2-481e-9627-8a44659f82bd /boot                   xfs     defaults        0 0
+# vi /etc/fstab # to comment out swap like below
 #/dev/mapper/rhel-swap   swap                    swap    defaults        0 0
 ```
 
@@ -206,21 +181,21 @@ drwxr-xr-x. 3 root root 19 Oct 10 11:05 ..
 ## Deploy ncp and nsx-node-agent
 ### Create namspace for ncp
 ```
-kubectl create ns nsx-system
+# kubectl create ns nsx-system
 ```
 
 ### Setup RBAC for ncp service account
 
 ```
-kubectl apply ncp-rbac.yaml
+# kubectl apply ncp-rbac.yaml
 ```
 
 ### Create secret used for NSX API client in NCP
 Please see README.md on upper folder about how to generate cert files
 
 ```
-kubectl -n nsx-system create secret tls ncp-client-cert --cert=./ncp-nsx-t-superuser.crt --key=./ncp-nsx-t-superuser.key
-kubectl -n nsx-system create secret generic nsx-cert --from-file=./nsx.crt
+# kubectl -n nsx-system create secret tls ncp-client-cert --cert=./ncp-nsx-t-superuser.crt --key=./ncp-nsx-t-superuser.key
+# kubectl -n nsx-system create secret generic nsx-cert --from-file=./nsx.crt
 ```
 ### Apply ncp configuration
 
@@ -228,8 +203,8 @@ The diff from VM is below
 - `node_type = BAREMETAL` in `[coe]`
 
 ```
-kubectl apply -f nsx-ncp-rsyslog-conf.yaml
-kubectl apply -f ncp-rc.yml
+# kubectl apply -f nsx-ncp-rsyslog-conf.yaml
+# kubectl apply -f ncp-rc.yml
 ```
 
 ### Apply nsx-node-agent configuration
@@ -256,8 +231,8 @@ The diff from VM is below
   ```
 
 ```
-kubectl apply -f nsx-node-agent-rsyslog-conf.yaml
-kubectl apply -f nsx-node-agent-ds.yml
+# kubectl apply -f nsx-node-agent-rsyslog-conf.yaml
+# kubectl apply -f nsx-node-agent-ds.yml
 ```
 
 
