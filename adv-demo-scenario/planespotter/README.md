@@ -6,6 +6,14 @@ The current **advanced** demo scenario involves the Planespotter application.
 
 There are two sets of configuration here. The Planespotter app under harbor/ will pull its images from harbor-tenant-01.sg.lab/planespotter/. The Planespotter app under original/ will pull from Docker hub when it's added.
 
+Note that all K8s nodes must have the following appended to `/etc/docker/daemon.json`
+
+```
+{
+  "insecure-registries" : ["harbor-tenant-01.sg.lab"]
+}
+```
+
 ## Installing Planespotter
 
 Installing Planespotter requires vSphere Cloud Provider configured.
