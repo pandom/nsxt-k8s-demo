@@ -1,2 +1,6 @@
 # General
 .DS_Store
+*.srl
+*.key
+*.crt
+*.cert

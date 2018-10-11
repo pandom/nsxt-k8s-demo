@@ -1,0 +1,32 @@
+# yaml template for NCP ReplicationController
+# Correct kubernetes API and NSX API parameters, and NCP Docker image
+# must be specified.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: rsyslog-config-node-agent
+    namespace: nsx-system
+    labels:
+        version: v1
+data:
+    ncp.conf: |
+        module(load="imfile")
+
+        ruleset(name="remote") {
+            action(type="omfwd"
+                   Protocol="tcp"
+                   Target="vrli-site2.ytsuboi.local"
+                   Port="514")
+
+            stop
+        }
+
+        input(type="imfile"
+              File="/var/log/nsx-ujo/nsx_kube_proxy.log"
+              Tag="nsx_kube_proxy"
+              Ruleset="remote")
+
+        input(type="imfile"
+              File="/var/log/nsx-ujo/nsx_node_agent.log"
+              Tag="nsx_node_agent"
+              Ruleset="remote")
