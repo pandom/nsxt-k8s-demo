@@ -75,7 +75,6 @@ data:
     adsb_server_poll_url = https://public-api.adsbexchange.com/VirtualRadar/AircraftList.json
     adsb_poll_filter = ?fRegS=N
     adsb_type = poll
-cat: cat: No such file or directory
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
