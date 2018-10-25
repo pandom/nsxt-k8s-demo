@@ -114,4 +114,4 @@ data:
     echo "starting planespotter-installer in background"
     /bin/planespotter-install.sh &
     echo "starting mysqld.."
-    /entrypoint.sh mysqld
+    /entrypoint.sh mysqld 
