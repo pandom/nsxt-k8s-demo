@@ -30,7 +30,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
       - name: mysql
-        image: harbor-tenant-01.sg.lab/planespotter/mysql:5.6
+        image: harbor.pks.corp.local/planespotter/mysql:5.6
         env:
           # Use secret in real usage
         - name: MYSQL_ROOT_PASSWORD

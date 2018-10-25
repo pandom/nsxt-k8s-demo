@@ -53,7 +53,7 @@ spec:
     spec:
       containers:
       - name: adsb-sync
-        image: harbor-tenant-01.sg.lab/planespotter/adsb-sync:1d791ea6e96eb50adb15e773d1d783f511618c97
+        image: harbor.pks.corp.local/planespotter/adsb-sync:1d791ea6e96eb50adb15e773d1d783f511618c97
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: config-volume
