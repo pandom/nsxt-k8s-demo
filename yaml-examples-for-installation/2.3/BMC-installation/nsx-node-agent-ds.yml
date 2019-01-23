@@ -65,7 +65,7 @@ data:
     enable_snat = True
 
     # The type of container node. Possible values are HOSTVM, BAREMETAL.
-    node_type = HOSTVM
+    node_type = BAREMETAL
 
     [ha]
     #
@@ -142,7 +142,7 @@ data:
     #proc_mount_path_prefix = /host
 
     # The OVS bridge to configure container interface.
-    #ovs_bridge = br-int
+    ovs_bridge = nsx-managed
 
     [nsx_kube_proxy]
     #
@@ -248,7 +248,7 @@ spec:
                 - SYS_PTRACE
                 - DAC_READ_SEARCH
                 # For BMC usecase
-                # - DAC_OVERRIDE
+                - DAC_OVERRIDE
           volumeMounts:
           # ncp.ini
           - name: config-volume
@@ -259,8 +259,8 @@ spec:
           - name: openvswitch
             mountPath: /var/run/openvswitch
           # mount nestdb-sock for baremetal node
-          # - name: nestdb-sock
-          #   mountPath: /var/run/vmware/nestdb/nestdb-server.sock
+          - name: nestdb-sock
+            mountPath: /var/run/vmware/nestdb/nestdb-server.sock
           - name: log-volume
             mountPath: /var/log/nsx-ujo
         - name: rsyslog
@@ -289,10 +289,10 @@ spec:
           hostPath:
             path: /var/run/openvswitch
         # volume for baremetal node
-        # - name: nestdb-sock
-        #   hostPath:
-        #     path: /var/run/vmware/nestdb/nestdb-server.sock
-        #     type: Socket
+        - name: nestdb-sock
+          hostPath:
+            path: /var/run/vmware/nestdb/nestdb-server.sock
+            type: Socket
         - name: rsyslog-config-volume
           configMap:
             name: rsyslog-config-node-agent

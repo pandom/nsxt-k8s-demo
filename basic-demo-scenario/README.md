@@ -37,6 +37,7 @@
   - `kubectl get svc`
   - `kubectl describe svc apple-demo`
   - Login to the slave node
+  - `sudo ovs-ofctl dump-flows -O OpenFlow13 br-int`
   - `sudo ovs-ofctl dump-groups -O OpenFlow13 br-int`
 
 ## Create Ingress
@@ -63,26 +64,11 @@
     i.e.) Block anything between pods and try ping between them
 
 ## Security: Kubernetes Network policies
-  - `kubectl create -f apple/default-net-policy.yaml`
-  - `kubectl get networkpolicy`
-  - `kubectl describe networkpolicy default-deny`
-  - See Firewall in GUI( sometimes reflesh on browse is needed)
-  - Try to access to 'apple.demo.corp.local'
   - `kubectl create -f apple/apple-demo-network-policy.yaml`
   - `kubectl get networkpolicy`
   - `kubectl describe networkpolicy apple-demo-policy` 
   - See Firewall in GUI( sometimes reflesh on browse is needed)
   - Try to access to 'apple.demo.corp.local'
-
-##  Spoof guard
-  - `kubectl -n orange create -f orange/pod-management.yaml`
-  - `kubectl -n orange exec -it orange-mgmtpod -- /bin/bash`
-  - `ip add`
-  - `ip add delete x.x.x.x/x dev eth0`
-  - `ip add add x.x.x.x/x dev eth0`
-  - `ping x.x.x.x`
-  - Check counters of CIF in GUI
-
 
 
 # Detail 
@@ -481,52 +467,6 @@ command terminated with exit code 1
     - Egress from Pods is ALLOW
   - If you create network policy, two sections will be created in FW
 
-### Create Default deny policy
-  - If you create network policy, two sections will be created in FW
-  - top section has no rule
-  - bottom section has two rules which is
-    - ANY to PODS deny
-    - PODS to ANY deny
-
-```yaml
-# apple/default-net-policy.yaml
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: default-deny
-spec:
-  podSelector: {}
-  policyTypes:
-  - Ingress
-  - Egress
-```
-
-```sh
-localadmin@k8s-master:~/demos$ kubectl create -f  apple/default-net-policy.yaml
-networkpolicy "default-deny" created
-lo
-localadmin@k8s-master:~/demos$ kubectl get networkpolicy
-NAME                POD-SELECTOR     AGE
-apple-demo-policy   app=apple-demo   21h
-default-deny        <none>           21h
-localadmin@k8s-master:~/demos$ kubectl describe networkpolicy default-deny
-Name:         default-deny
-Namespace:    apple
-Created on:   2018-02-04 21:59:27 -0800 PST
-Labels:       <none>
-Annotations:  <none>
-Spec:
-  PodSelector:     <none> (Allowing the specific traffic to all pods in this namespace)
-  Allowing ingress traffic:
-    <none> (Selected pods are isolated for ingress connectivity)
-  Allowing egress traffic:
-    <none> (Selected pods are isolated for egress connectivity)
-  Policy Types: Ingress, Egress
-
-```
-
-![fw-default-deny.jpg](resources/7DE8C4AEC768DED83CBCF37FF937DA50.jpg)
-
 ### Create policy which allows incoming http traffic
   - If you create network policy, two sections will be created in FW
   - top section has the rule allows http
@@ -578,75 +518,6 @@ localadmin@k8s-master:~/demos$
 
 ![fw-app-networkpolicy.jpg](resources/7CF6DBB93F83B2897A2AC7C759CBC307.jpg)
 
-## Security: Spoofguard
-  - Create pod with 'security context'
-  - This will enforce spoofguard on CIF
-
-```yaml
-# orange/pod-management.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: orange-mgmtpod
-spec:
-  containers:
-  - name: ubuntu
-    image: tutum/ubuntu:trusty
-    imagePullPolicy: IfNotPresent
-    ports:
-    - name: ssh
-      containerPort: 22
-    env:
-    - name: ROOT_PASS
-      value: VMware1!
-    securityContext:
-      privileged: true
-```
-
-```sh
-localadmin@k8s-master:~/demos$ kubectl -n orange create -f orange/pod-management.yaml
-pod "orange-mgmtpod" created
-localadmin@k8s-master:~/demos$ kubectl -n orange get pod -o wide
-NAME                   READY     STATUS    RESTARTS   AGE       IP           NODE
-orange-demo-rc-dgdtl   1/1       Running   1          5d        10.4.0.102   k8s-node2
-orange-demo-rc-dkq6v   1/1       Running   1          5d        10.4.0.101   k8s-node1
-orange-mgmtpod         1/1       Running   1          11d       10.4.0.100   k8s-node1
-localadmin@k8s-master:~/demos$
-localadmin@k8s-master:~/demos$ kubectl -n orange exec -it orange-mgmtpod -- /bin/bash
-root@orange-mgmtpod:/#
-root@orange-mgmtpod:/# ip add
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host
-       valid_lft forever preferred_lft forever
-10: eth0@if11: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
-    link/ether 02:50:56:00:40:03 brd ff:ff:ff:ff:ff:ff
-    inet 10.4.0.100/27 scope global eth0
-       valid_lft forever preferred_lft forever
-    inet6 fe80::50:56ff:fe00:4003/64 scope link
-       valid_lft forever preferred_lft forever
-
-root@orange-mgmtpod:/#
-root@orange-mgmtpod:/# ping -c 3 10.4.0.101
-PING 10.4.0.101 (10.4.0.101) 56(84) bytes of data.
-64 bytes from 10.4.0.101: icmp_seq=1 ttl=64 time=2.05 ms
-64 bytes from 10.4.0.101: icmp_seq=2 ttl=64 time=1.39 ms
-64 bytes from 10.4.0.101: icmp_seq=3 ttl=64 time=0.628 ms
-
---- 10.4.0.101 ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2005ms
-rtt min/avg/max/mdev = 0.628/1.359/2.051/0.582 ms
-root@orange-mgmtpod:/#
-root@orange-mgmtpod:/# ip add delete 10.4.0.100/27 dev eth0
-root@orange-mgmtpod:/# ip add add 10.4.0.103/27 dev eth0
-root@orange-mgmtpod:/# ping 10.4.0.101
-PING 10.4.0.101 (10.4.0.101) 56(84) bytes of data.
-
-```
-
-![k8s-spoofguard.jpg](resources/9488F2DA785F26AB7C5ADB3C1C963BBF.jpg)
 
 # Link
  - https://confluence.eng.vmware.com/display/UJO/DK+GA+Deployment+with+Kubeadm
