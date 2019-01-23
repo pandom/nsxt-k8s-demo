@@ -47,20 +47,7 @@ spec:
       name: tcp
   selector:
     app: ${TENANT}-demo
----
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: ${TENANT}-demo-ingress
-spec:
-  rules:
-  - host: ${TENANT}.demo.corp.local
-    http:
-      paths:
-      - backend:
-          serviceName: ${TENANT}-demo
-          servicePort: 80
-
+  type: LoadBalancer
 EOF
 
 kubectl create ns ${TENANT}

@@ -7,6 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nsx-node-agent-config
+  namespace: nsx-system
   labels:
     version: v1
 data:
@@ -182,11 +183,14 @@ spec:
       hostNetwork: true
       # If configured with ServiceAccount, update the ServiceAccount
       # name below.
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       serviceAccountName: nsx-node-agent-svc-account
       containers:
         - name: nsx-node-agent
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0
+          image: harbor.ytsuboi.local/library/nsx-ncp-ubuntu:2.3.1
           imagePullPolicy: IfNotPresent
           # override NCP image entrypoint
           command: ["start_node_agent"]
@@ -230,7 +234,7 @@ spec:
             mountPath: /var/log/nsx-ujo
         - name: nsx-kube-proxy
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0          
+          image: harbor.ytsuboi.local/library/nsx-ncp-ubuntu:2.3.1
           imagePullPolicy: IfNotPresent
           # override NCP image entrypoint
           command: ["start_kube_proxy"]

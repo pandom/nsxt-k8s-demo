@@ -207,6 +207,11 @@ data:
     # Option to use native loadbalancer support.
     use_native_loadbalancer = True
 
+    # Option to auto scale layer 4 load balancer or not. If set to True, NCP
+    # will create additional LB when necessary upon K8s Service of type LB
+    # creation/update.
+    l4_lb_auto_scaling = True
+
     # Used when ingress class annotation is missing
     # if set to true, the ingress will be handled by nsx lbs
     # otherwise will be handled by 3rd party ingress controller (e.g. nginx)
@@ -229,7 +234,7 @@ data:
     # LARGE Edge VM (8 vCPU, 16GB) only supports MEDIUM and SMALL LB.
     # Bare Metal Edge (IvyBridge, 2 socket, 128GB) supports LARGE, MEDIUM and
     # SMALL LB
-    service_size = 'MEDIUM'
+    service_size = 'SMALL'
 
     # Choice of persistence type for ingress traffic through L7 Loadbalancer.
     # Accepted values:
@@ -303,7 +308,7 @@ spec:
       containers:
         - name: nsx-ncp
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0
+          image: harbor.ytsuboi.local/library/nsx-ncp-ubuntu:2.3.1
           imagePullPolicy: IfNotPresent
           env:
             - name: NCP_NAME

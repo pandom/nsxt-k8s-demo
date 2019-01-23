@@ -7,6 +7,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: nsx-node-agent-config
+  namespace: nsx-system
   labels:
     version: v1
 data:
@@ -23,7 +24,7 @@ data:
 
     # The log file path must be set to something like '/var/log/nsx-ujo/'. By
     # default, logging to file is disabled.
-    log_dir = /var/log/nsx-ujo/
+    #log_dir = None
 
     # Name of log file to send logging output to. If log_dir is set but log_file is
     # not, the binary name will be used, i.e., ncp.log, nsx_node_agent.log and
@@ -98,7 +99,7 @@ data:
     # IP address of the Kubernetes API Server. If not set, will try to
     # read and use the Kubernetes Service IP from environment variable
     # KUBERNETES_SERVICE_HOST.
-    apiserver_host_ip = k8s-api.ytsuboi.local
+    apiserver_host_ip = k8s-api.corp.local
 
     # Port of the Kubernetes API Server.
     # Set to 6443 for https. If not set, will try to
@@ -139,10 +140,10 @@ data:
     # By default node /proc will be mounted to /host/proc, the prefix is /host.
     # It should be the same setting with mounted path in the daemonset yaml file.
     # Set the path to '' if nsx_node_agent is running as a process in minion node.
-    #proc_mount_path_prefix = /host
+    proc_mount_path_prefix = /host
 
     # The OVS bridge to configure container interface.
-    #ovs_bridge = br-int
+    ovs_bridge = br-int
 
     [nsx_kube_proxy]
     #
@@ -171,22 +172,23 @@ spec:
   template:
     metadata:
       annotations:
-        #container.apparmor.security.beta.kubernetes.io/nsx-node-agent: localhost/node-agent-apparmor
+        container.apparmor.security.beta.kubernetes.io/nsx-node-agent: localhost/node-agent-apparmor
       labels:
         tier: nsx-networking
         component: nsx-node-agent
         version: v1
     spec:
-      #nodeSelector:
-      #  type: vm
       hostNetwork: true
       # If configured with ServiceAccount, update the ServiceAccount
       # name below.
       serviceAccountName: nsx-node-agent-svc-account
+      tolerations:
+        - effect: NoSchedule
+          key: node-role.kubernetes.io/master
       containers:
         - name: nsx-node-agent
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0
+          image: registry.local/2.3.2.11695762/nsx-ncp-ubuntu:latest
           imagePullPolicy: IfNotPresent
           # override NCP image entrypoint
           command: ["start_node_agent"]
@@ -226,11 +228,9 @@ spec:
           - name: proc
             mountPath: /host/proc
             readOnly: true
-          - name: log-volume
-            mountPath: /var/log/nsx-ujo
         - name: nsx-kube-proxy
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0          
+          image: registry.local/2.3.2.11695762/nsx-ncp-ubuntu:latest
           imagePullPolicy: IfNotPresent
           # override NCP image entrypoint
           command: ["start_kube_proxy"]
@@ -263,17 +263,6 @@ spec:
           # mount nestdb-sock for baremetal node
           # - name: nestdb-sock
           #   mountPath: /var/run/vmware/nestdb/nestdb-server.sock
-          - name: log-volume
-            mountPath: /var/log/nsx-ujo
-        - name: rsyslog
-          image: jumanjiman/rsyslog
-          imagePullPolicy: IfNotPresent
-          volumeMounts:
-            - name: rsyslog-config-volume
-              mountPath: /etc/rsyslog.d
-              readOnly: true
-            - name: log-volume
-              mountPath: /var/log/nsx-ujo
       volumes:
         - name: config-volume
           configMap:
@@ -295,9 +284,3 @@ spec:
         #   hostPath:
         #     path: /var/run/vmware/nestdb/nestdb-server.sock
         #     type: Socket
-        - name: rsyslog-config-volume
-          configMap:
-            name: rsyslog-config-node-agent
-        - name: log-volume
-          hostPath:
-            path: /var/log/nsx-ujo/

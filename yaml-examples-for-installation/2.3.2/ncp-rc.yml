@@ -24,7 +24,7 @@ data:
 
     # The log file path must be set to something like '/var/log/nsx-ujo/'. By
     # default, logging to file is disabled.
-    log_dir = /var/log/nsx-ujo/
+    #log_dir = None
 
     # Name of log file to send logging output to. If log_dir is set but log_file is
     # not, the binary name will be used, i.e., ncp.log, nsx_node_agent.log and
@@ -99,7 +99,7 @@ data:
     # IP address of the Kubernetes API Server. If not set, will try to
     # read and use the Kubernetes Service IP from environment variable
     # KUBERNETES_SERVICE_HOST.
-    apiserver_host_ip = k8s-api.ytsuboi.local
+    apiserver_host_ip = k8s-api.corp.local
 
     # Port of the Kubernetes API Server.
     # Set to 6443 for https. If not set, will try to
@@ -133,7 +133,7 @@ data:
 
     # Specify how ingress controllers are expected to be deployed. Possible values:
     # hostnetwork or nat. NSX will create NAT rules only in the second case.
-    #ingress_mode = hostnetwork
+    ingress_mode = hostnetwork
 
     [nsx_v3]
     #
@@ -145,7 +145,7 @@ data:
     # <ip_address1>[:<port1>],<ip_address2>[:<port2>],...
     # HTTPS will be used for communication with NSX. If port is not provided,
     # port 443 will be used.
-    nsx_api_managers = nsxm-site2.ytsuboi.local
+    nsx_api_managers = nsxmgr-01a.corp.local
 
     # If true, the NSX Manager server certificate is not verified. If false the CA
     # bundle specified via "ca_file" will be used or if unsest the default system
@@ -156,17 +156,17 @@ data:
     # server certificate. This option is ignored if "insecure" is set to True. If
     # "insecure" is set to False and ca_file is unset, the system root CAs will be
     # used to verify the server certificate. (list value)
-    ca_file = /etc/nsx-cert/nsx.crt
+    ca_file = /etc/nsx-cert/nsx-ca.crt
 
     # Path to NSX client certificate file. If specified, the nsx_api_user and
     # nsx_api_passsword options will be ignored. This option must be specified
     # along with "nsx_api_private_key_file" option.
-    nsx_api_cert_file = /etc/nsx-t-client/tls.crt
+    nsx_api_cert_file = /etc/ncp-client/tls.crt
 
     # Path to NSX client private key file. If specified, the nsx_api_user and
     # nsx_api_passsword options will be ignored. This option must be specified
     # along with "nsx_api_cert_file" option.
-    nsx_api_private_key_file = /etc/nsx-t-client/tls.key
+    nsx_api_private_key_file = /etc/ncp-client/tls.key
 
     # The time in seconds before aborting a HTTP connection to a NSX manager.
     # (integer value)
@@ -202,10 +202,15 @@ data:
     subnet_prefix = 24
 
     # Indicates whether distributed firewall DENY rules are logged.
-    #log_dropped_traffic = False
+    log_dropped_traffic = True
 
     # Option to use native loadbalancer support.
     use_native_loadbalancer = True
+
+    # Option to auto scale layer 4 load balancer or not. If set to True, NCP
+    # will create additional LB when necessary upon K8s Service of type LB
+    # creation/update.
+    l4_lb_auto_scaling = True
 
     # Used when ingress class annotation is missing
     # if set to true, the ingress will be handled by nsx lbs
@@ -213,10 +218,10 @@ data:
     default_ingress_class_nsx = True
 
     # Path to the default certificate file for HTTPS load balancing
-    lb_default_cert_path = /etc/nsxt-lb-cert/tls.crt
+    lb_default_cert_path = /etc/nsx-lb/tls.crt
 
     # Path to the private key file for default certificate for HTTPS load balancing
-    lb_priv_key_path = /etc/nsxt-lb-cert/tls.key
+    lb_priv_key_path = /etc/nsx-lb/tls.key
 
     # Option to set load balancing algorithm in load balancer pool object.
     # Available choices are
@@ -229,7 +234,7 @@ data:
     # LARGE Edge VM (8 vCPU, 16GB) only supports MEDIUM and SMALL LB.
     # Bare Metal Edge (IvyBridge, 2 socket, 128GB) supports LARGE, MEDIUM and
     # SMALL LB
-    service_size = 'MEDIUM'
+    service_size = 'SMALL'
 
     # Choice of persistence type for ingress traffic through L7 Loadbalancer.
     # Accepted values:
@@ -243,35 +248,39 @@ data:
     l4_persistence = 'source_ip'
 
     # Name or UUID of the tier0 router that project tier1 routers connect to
-    tier0_router = b6453ea5-178e-4844-990d-021f871eeae5
+    tier0_router = d8c7b160-0c9e-454e-8250-c547d8478ce8
 
     # Name or UUID of the NSX overlay transport zone that will be used for creating
     # logical switches for container networking. It must refer to an existing
     # transport zone on NSX and every hypervisor that hosts the Kubernetes
     # node VMs must join this transport zone
-    overlay_tz = 875a9946-2b8f-47c7-8a63-4a06730f5673
+    overlay_tz = caec11a1-6df9-4e33-b7a9-0b990cb11038
 
     # Name or UUID of the NSX lb service that can be attached by virtual servers
-    lb_service = a5e3d2cd-c4c2-41af-bda3-3f825a282517
+    #lb_service = <None>
 
     # Name or UUID of the container ip blocks that will be used for creating
     # subnets. If name, it must be unique
-    container_ip_blocks = d641a1cf-4039-4771-bf84-6b5bbc71b524
+    container_ip_blocks = 85288fa1-d955-4acc-bc46-1048dd8335d8
 
     # Name or UUID of the container ip blocks that will be used for creating
     # subnets for no-SNAT projects. If specified, no-SNAT projects will use these
     # ip blocks ONLY. Otherwise they will use container_ip_blocks
-    no_snat_ip_blocks = a8df19b1-dd62-4491-871d-18aaedd63ab8
+    no_snat_ip_blocks = a076fbaa-9af1-4eeb-af54-cf825d9754b1
 
     # Name or UUID of the external ip pools that will be used for allocating IP
     # addresses which will be used for translating container IPs via SNAT rules
-    external_ip_pools = cc81b0d2-67e1-4a1e-a081-bdf57290eb1b
+    external_ip_pools = fa83e738-8922-4a60-8dae-409a72d21e3f
+
+    # Name or UUID of the external ip pools that will be used for allocating IP
+    # addresses for exposing LoadBalancer type service and ingress controller
+    external_ip_pools_lb = 7bc57f3b-c3cb-490b-8f28-4f51ccdf2828
 
     # Firewall sections for this cluster will be created below this mark section
-    top_firewall_section_marker = 5a4e0860-61fa-45cb-8a02-53d91253b822
+    top_firewall_section_marker = 37e48629-be3f-43df-953d-f50222da62b4
 
     # Firewall sections for this cluster will be created above this mark section
-    bottom_firewall_section_marker = bd5d96d7-a0d8-42f8-8b2a-52c148d1dfe6
+    bottom_firewall_section_marker = 25cd5381-b873-4fb9-b310-acee36efc386
 
 ---
 apiVersion: v1
@@ -303,7 +312,7 @@ spec:
       containers:
         - name: nsx-ncp
           # Docker image for NCP
-          image: harbor.ytsuboi.local/library/nsx-ncp-rhel:2.3.0
+          image: registry.local/2.3.2.11695762/nsx-ncp-ubuntu:latest
           imagePullPolicy: IfNotPresent
           env:
             - name: NCP_NAME
@@ -331,25 +340,14 @@ spec:
             subPath: ncp.ini
             readOnly: true
           - name: ncp-client-cert
-            mountPath: /etc/nsx-t-client
+            mountPath: /etc/ncp-client
             readOnly: true
           - name: nsx-cert
             mountPath: /etc/nsx-cert
             readOnly: true
           - name: default-lb-tls
-            mountPath: /etc/nsxt-lb-cert
+            mountPath: /etc/nsx-lb
             readOnly: true
-          - name: log-volume
-            mountPath: /var/log/nsx-ujo
-        - name: rsyslog
-          image: jumanjiman/rsyslog
-          imagePullPolicy: IfNotPresent
-          volumeMounts:
-          - name: rsyslog-config-volume
-            mountPath: /etc/rsyslog.d
-            readOnly: true
-          - name: log-volume
-            mountPath: /var/log/nsx-ujo
       volumes:
         - name: config-volume
           # ConfigMap nsx-ncp-config is expected to supply ncp.ini
@@ -367,9 +365,3 @@ spec:
           secret:
             defaultMode: 420
             secretName: default-lb-tls
-        - name: rsyslog-config-volume
-          configMap:
-            name: rsyslog-config
-        - name: log-volume
-          hostPath:
-            path: /var/log/nsx-ujo/
