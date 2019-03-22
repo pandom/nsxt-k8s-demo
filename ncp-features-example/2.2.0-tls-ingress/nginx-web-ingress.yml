@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-tls-ingress
+  namespace: ncp-feature
+  labels:
+    feature: tls-ingress   
+spec:
+  tls:
+  - secretName: tls-ingress
+  rules:
+  - host: tls-ingress.demo.corp.local
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: nginx-tls-ingress
+          servicePort: 80

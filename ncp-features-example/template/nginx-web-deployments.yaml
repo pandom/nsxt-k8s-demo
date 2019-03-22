@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-${FEATURE_NAME}
+  namespace: ncp-feature
+  labels:
+    feature: ${FEATURE_NAME} 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: ${FEATURE_NAME}       
+  template:
+    metadata:
+      labels:
+        feature: ${FEATURE_NAME} 
+    spec:
+      containers:
+      - name: nginx-${FEATURE_NAME} 
+        image: nginx
+        ports:
+        - containerPort: 80

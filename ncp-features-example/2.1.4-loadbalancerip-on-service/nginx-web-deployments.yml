@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-loadbalancerip-on-service
+  namespace: ncp-feature
+  labels:
+    feature: loadbalancerip-on-service 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: loadbalancerip-on-service       
+  template:
+    metadata:
+      labels:
+        feature: loadbalancerip-on-service 
+    spec:
+      containers:
+      - name: nginx-loadbalancerip-on-service 
+        image: nginx
+        ports:
+        - containerPort: 80

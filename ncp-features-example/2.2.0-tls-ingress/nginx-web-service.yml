@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-tls-ingress
+  namespace: ncp-feature
+  labels:
+    feature: tls-ingress 
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: tcp
+  selector:
+    feature: tls-ingress

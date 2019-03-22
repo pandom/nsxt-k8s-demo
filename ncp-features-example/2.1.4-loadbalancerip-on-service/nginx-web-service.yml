@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-loadbalancerip-on-service
+  namespace: ncp-feature
+  labels:
+    feature: loadbalancerip-on-service 
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: tcp
+  selector:
+    feature: loadbalancerip-on-service
+  type: LoadBalancer
+  loadBalancerIP: test-lbip-pool

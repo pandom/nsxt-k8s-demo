@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-ingress-rewrite
+  namespace: ncp-feature
+  labels:
+    feature: ingress-rewrite 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: ingress-rewrite       
+  template:
+    metadata:
+      labels:
+        feature: ingress-rewrite 
+    spec:
+      containers:
+      - name: nginx-ingress-rewrite 
+        image: nginx
+        ports:
+        - containerPort: 80

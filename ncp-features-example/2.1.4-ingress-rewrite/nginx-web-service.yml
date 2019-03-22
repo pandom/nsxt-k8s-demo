@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-ingress-rewrite
+  namespace: ncp-feature
+  labels:
+    feature: ingress-rewrite 
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: tcp
+  selector:
+    feature: ingress-rewrite

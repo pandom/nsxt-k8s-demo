@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-tls-ingress
+  namespace: ncp-feature
+  labels:
+    feature: tls-ingress 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: tls-ingress       
+  template:
+    metadata:
+      labels:
+        feature: tls-ingress 
+    spec:
+      containers:
+      - name: nginx-tls-ingress 
+        image: nginx
+        ports:
+        - containerPort: 80

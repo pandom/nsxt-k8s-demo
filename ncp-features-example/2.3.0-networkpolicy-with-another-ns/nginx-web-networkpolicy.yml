@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: nginx-web-networkpolicy-with-another-ns
+  namespace: ncp-feature
+  labels:
+    feature: networkpolicy-with-another-ns     
+spec:
+  podSelector:
+    matchExpressions:
+      - {key: feature, operator: In, values: [networkpolicy-with-another-ns]}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          team: infra
+      podSelector:
+        matchExpressions:
+        - {key: feature, operator: In, values: [client]}
+    ports:
+    - protocol: TCP
+      port: 80

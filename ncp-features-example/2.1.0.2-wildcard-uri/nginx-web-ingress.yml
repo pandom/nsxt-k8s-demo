@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-wildcard-uri
+  namespace: ncp-feature
+  labels:
+    feature: wildcard-uri   
+spec:
+  rules:
+  - host: wildcard-uri.demo.corp.local
+    http:
+      paths:
+      - path: /tea/*
+        backend:
+          serviceName: nginx-wildcard-uri
+          servicePort: 80

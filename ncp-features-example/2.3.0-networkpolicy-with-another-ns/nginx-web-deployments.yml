@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-networkpolicy-with-another-ns
+  namespace: ncp-feature
+  labels:
+    feature: networkpolicy-with-another-ns 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: networkpolicy-with-another-ns       
+  template:
+    metadata:
+      labels:
+        feature: networkpolicy-with-another-ns 
+    spec:
+      containers:
+      - name: nginx-networkpolicy-with-another-ns 
+        image: nginx
+        ports:
+        - containerPort: 80

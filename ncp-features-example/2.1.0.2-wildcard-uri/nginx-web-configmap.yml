@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tea-default-html
+  namespace: ncp-feature
+  labels:
+    feature: wildcard-uri   
+data:
+  index.html: 'tea-index page.'
+

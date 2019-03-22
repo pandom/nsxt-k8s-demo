@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-${FEATURE_NAME}
+  namespace: ncp-feature
+  labels:
+    feature: ${FEATURE_NAME}   
+spec:
+  rules:
+  - host: ${FEATURE_NAME}.demo.corp.local
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: nginx-${FEATURE_NAME}
+          servicePort: 80

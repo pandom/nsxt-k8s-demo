@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: snat-per-service-svc
+  namespace: ncp-feature
+  annotations:
+    ncp/snat_pool: test-ippool
+  labels:
+    feature: snat-per-service      
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: tcp
+  selector:
+    feature: snat-per-service          
+

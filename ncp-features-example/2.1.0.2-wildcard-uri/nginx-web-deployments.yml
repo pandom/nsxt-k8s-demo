@@ -1,0 +1,31 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-wildcard-uri
+  namespace: ncp-feature
+  labels:
+    feature: wildcard-uri 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: wildcard-uri       
+  template:
+    metadata:
+      labels:
+        feature: wildcard-uri 
+    spec:
+      containers:
+      - name: nginx-wildcard-uri 
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: tea-default-html
+          mountPath: /usr/share/nginx/html/tea/index.html
+          subPath: index.html
+          readOnly: true
+      volumes:
+        - name: tea-default-html
+          configMap:
+            name: tea-default-html

@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-matchexpression-with-networkpolicy
+  namespace: ncp-feature
+  labels:
+    feature: matchexpression-with-networkpolicy 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: matchexpression-with-networkpolicy       
+  template:
+    metadata:
+      labels:
+        feature: matchexpression-with-networkpolicy 
+    spec:
+      containers:
+      - name: nginx-matchexpression-with-networkpolicy 
+        image: nginx
+        ports:
+        - containerPort: 80

@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-snat-per-service-only-for-ns
+  namespace: ncp-feature
+  labels:
+    feature: snat-per-service-only-for-ns 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: snat-per-service-only-for-ns       
+  template:
+    metadata:
+      labels:
+        feature: snat-per-service-only-for-ns 
+    spec:
+      containers:
+      - name: nginx-snat-per-service-only-for-ns 
+        image: nginx
+        ports:
+        - containerPort: 80

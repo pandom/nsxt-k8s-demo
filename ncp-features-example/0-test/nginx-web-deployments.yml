@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-test
+  namespace: ncp-feature
+  labels:
+    feature: test 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: test       
+  template:
+    metadata:
+      labels:
+        feature: test 
+    spec:
+      containers:
+      - name: nginx-test 
+        image: nginx
+        ports:
+        - containerPort: 80
