@@ -57,7 +57,7 @@ If you want service type lb in a new tenant, you can do like `./create-lbservice
 │   ├── create-ingress.sh
 │   ├── create-lbservice.sh
 │   └── demo-init.sh
-
+```
 
 ## yaml-examples-for-installation
 
