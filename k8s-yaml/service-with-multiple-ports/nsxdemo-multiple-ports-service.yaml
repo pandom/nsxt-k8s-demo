@@ -9,8 +9,7 @@ spec:
     name: web
   - port: 12201
     targetPort: 12201
-    protocol: UDP
     name: gelf
-#  type: LoadBalancer
+  type: LoadBalancer
   selector:
     app: nsxdemo-multple-ports

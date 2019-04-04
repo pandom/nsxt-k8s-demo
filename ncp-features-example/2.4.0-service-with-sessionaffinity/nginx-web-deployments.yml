@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-service-with-sessionaffinity
+  namespace: ncp-feature
+  labels:
+    feature: service-with-sessionaffinity 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: service-with-sessionaffinity       
+  template:
+    metadata:
+      labels:
+        feature: service-with-sessionaffinity 
+    spec:
+      containers:
+      - name: nginx-service-with-sessionaffinity 
+        image: nginx
+        ports:
+        - containerPort: 80

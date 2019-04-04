@@ -1,10 +1,12 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: nginx-tls-ingress
+  name: nginx-allow-http
   namespace: ncp-feature
   labels:
-    feature: tls-ingress   
+    feature: allow-http   
+  annotations:
+    kubernetes.io/ingress.allow-http: "false"
 spec:
   tls:
   - hosts:
@@ -16,5 +18,5 @@ spec:
       paths:
       - path: "/"
         backend:
-          serviceName: nginx-tls-ingress
+          serviceName: nginx-allow-http
           servicePort: 80

@@ -1,22 +1,22 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: nginx-test
+  name: nginx-allow-http
   namespace: ncp-feature
   labels:
-    feature: test 
+    feature: allow-http 
 spec:
   replicas: 3
   selector:
     matchLabels:
-      feature: test       
+      feature: allow-http       
   template:
     metadata:
       labels:
-        feature: test 
+        feature: allow-http 
     spec:
       containers:
-      - name: nginx-test 
+      - name: nginx-allow-http 
         image: nginx
         ports:
         - containerPort: 80
