@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: nginx-cert-chain
+  namespace: ncp-feature
+  labels:
+    feature: cert-chain   
+spec:
+  tls:
+  - hosts:
+    - tls-ingress.ytsuboi.local
+    secretName: cert-chain
+  rules:
+  - host: tls-ingress.ytsuboi.local
+    http:
+      paths:
+      - path: "/"
+        backend:
+          serviceName: nginx-cert-chain
+          servicePort: 80

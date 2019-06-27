@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-cert-chain
+  namespace: ncp-feature
+  labels:
+    feature: cert-chain
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: cert-chain
+  template:
+    metadata:
+      labels:
+        feature: cert-chain
+    spec:
+      containers:
+      - name: nginx-cert-chain
+        image: nginx
+        ports:
+        - containerPort: 80
