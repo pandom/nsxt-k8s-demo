@@ -1,0 +1,13 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: frontend
+  namespace: frontend
+spec:
+  rules:
+  - host: frontend.ytsuboi.local
+    http:
+      paths:
+      - backend:
+          serviceName: frontend
+          servicePort: 8080

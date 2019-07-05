@@ -1,0 +1,22 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: nginx-service-nodeport
+  namespace: ncp-feature
+  labels:
+    feature: service-nodeport 
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      feature: service-nodeport       
+  template:
+    metadata:
+      labels:
+        feature: service-nodeport 
+    spec:
+      containers:
+      - name: nginx-service-nodeport 
+        image: nginx
+        ports:
+        - containerPort: 80
