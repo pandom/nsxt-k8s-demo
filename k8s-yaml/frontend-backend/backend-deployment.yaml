@@ -12,6 +12,6 @@ spec:
     spec:
       containers:
       - name: backend
-        image: ytsuboi/frontend-server:0.1
+        image: ytsuboi/backend-server:0.1
         ports:
         - containerPort: 8081
